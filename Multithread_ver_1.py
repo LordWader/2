@@ -58,5 +58,5 @@ if __name__=='__main__':
         value = random.randrange(0, 10)
         sql.insert(name, value)
     sql.delete('Papa John')
-    sql.update('Ania', 'Nickanora')
+    sql.update('Ania', 'Nickita')
     sql.update(8, 100)
