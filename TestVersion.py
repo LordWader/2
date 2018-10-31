@@ -2,6 +2,10 @@ import threading
 import random
 import time, sqlite3
 
+lock = threading.Lock()
+con = sqlite3.connect("DB.db", check_same_thread=False)
+cursor = con.cursor()
+
 class myThread(threading.Thread):
 
    def __init__(self, param):
@@ -9,12 +13,13 @@ class myThread(threading.Thread):
        self.param = param
 
    def run(self):
-       con = sqlite3.connect("DB.db", check_same_thread=False)
-       cursor = con.cursor()
-       cursor.execute("create table if not exists people(name text, value real)")
-       cursor.execute(self.param)
-       con.commit()
-       con.close()
+      try:
+         lock.acquire(True)
+         cursor.execute("create table if not exists people(name text, value real)")
+         cursor.execute(self.param)
+         con.commit()
+      finally:
+         lock.release()
 
 while True:
     names = ['Ania', 'Natasha', 'Guido van Rossum', 'Kate', 'Papa John']
@@ -28,5 +33,3 @@ while True:
         threadpool.append(myThread(result))
     for t in threadpool:
         t.start()
-    for t in threadpool:
-        t.join()
