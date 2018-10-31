@@ -18,10 +18,15 @@ class myThread(threading.Thread):
 
 while True:
     names = ['Ania', 'Natasha', 'Guido van Rossum', 'Kate', 'Papa John']
+    threadpool = []
     for i in range(10):
         name = random.choice(names)
         value = random.randrange(0, 10)
         result = "insert into people values({}, {})".format('"' + name + '"', value)
-        myThread(result).start()
+        threadpool.append(myThread(result))
         result = "delete from people where value = 4 or value = 0"
-        myThread(result).start()
+        threadpool.append(myThread(result))
+    for t in threadpool:
+        t.start()
+    for t in threadpool:
+        t.join()
